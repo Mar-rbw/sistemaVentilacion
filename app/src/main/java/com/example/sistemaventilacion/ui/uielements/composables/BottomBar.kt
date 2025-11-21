@@ -18,23 +18,23 @@ fun BottomAppBar(navController: NavHostController) {
             navController.navigate(("Auth"))
         } .padding(6.dp))
 
-        Text("Auth", modifier = Modifier.clickable{
+        Text("Hub", modifier = Modifier.clickable{
             navController.navigate(("Hub"))
         } .padding(6.dp))
 
-        Text("Auth", modifier = Modifier.clickable{
+        Text("NotificacionHumedad", modifier = Modifier.clickable{
             navController.navigate(("NotificacionHumedad"))
         } .padding(6.dp))
 
-        Text("Auth", modifier = Modifier.clickable{
+        Text("NotificacionTemperatura", modifier = Modifier.clickable{
             navController.navigate(("NotificacionTemperatura"))
         } .padding(6.dp))
 
-        Text("Auth", modifier = Modifier.clickable{
+        Text("ActivacionSistema", modifier = Modifier.clickable{
             navController.navigate(("ActivacionSistema"))
         } .padding(6.dp))
 
-        Text("Auth", modifier = Modifier.clickable{
+        Text("AgendarActivacion", modifier = Modifier.clickable{
             navController.navigate(("AgendarActivacion"))
         } .padding(6.dp))
     }

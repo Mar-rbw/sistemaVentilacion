@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.sistemaventilacion.R
+import com.example.sistemaventilacion.ui.uielements.composables.BottomAppBar
 import com.example.sistemaventilacion.ui.uielements.composables.ImageElement
 import com.example.sistemaventilacion.ui.uielements.composables.TopBar
 import kotlin.math.roundToInt
@@ -23,7 +24,8 @@ fun NotificacionHumedadScreen(navController: NavHostController) {
                 canGoBack = true,
                 inclusive = false
             )
-        }
+        },
+        bottomBar = { BottomAppBar(navController = navController) }
     ) { paddingValues ->
         NotificacionHumedadStructure(
             modifier = Modifier.padding(paddingValues)

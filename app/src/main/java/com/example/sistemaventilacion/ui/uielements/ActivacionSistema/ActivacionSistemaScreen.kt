@@ -15,6 +15,7 @@ import com.example.sistemaventilacion.ui.uielements.composables.TopBar
 import androidx.compose.ui.platform.LocalContext
 import android.widget.Toast
 import androidx.compose.foundation.text.KeyboardOptions
+import com.example.sistemaventilacion.ui.uielements.composables.BottomAppBar
 
 @Composable
 fun ActivacionSistemaScreen(navController: NavHostController) {
@@ -27,7 +28,8 @@ fun ActivacionSistemaScreen(navController: NavHostController) {
                 canGoBack = true,
                 inclusive = false
             )
-        }
+        },
+        bottomBar = { BottomAppBar(navController = navController)}
     ) { paddingValues ->
         ActivacionSistemaStructure(navController, modifier = Modifier.padding(paddingValues))
     }

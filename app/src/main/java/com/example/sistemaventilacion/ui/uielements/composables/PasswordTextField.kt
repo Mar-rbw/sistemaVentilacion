@@ -23,7 +23,7 @@ fun PasswordTextField(
     label: String,
     placeholder: String,
 ) {
-    var passwordVisible by rememberSaveable {mutableStateOf((false))}
+    var passwordVisible by rememberSaveable {mutableStateOf(false)}
     Column() {
         TextField(
             value = value,

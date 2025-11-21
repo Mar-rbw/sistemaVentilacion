@@ -10,10 +10,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 *https://developer.android.com/reference/java/lang/System
 * */
 
+
 @Composable
 fun RememberDebouncedAction(
     debounceTime: Long = 300L,
-    action: () -> Unit ): () -> Unit {
+    action: () -> Unit
+): () -> Unit {
     val lastClickTime = rememberSaveable { mutableStateOf(0L) }
 
     return {

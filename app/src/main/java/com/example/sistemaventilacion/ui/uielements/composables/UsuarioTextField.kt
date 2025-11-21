@@ -30,9 +30,9 @@ fun UsuarioTextField(
             placeholder = { Text(textInput) },
             leadingIcon = {
                 ImageElement(
-                    R.drawable.user, // Reemplaza con tu ID de recurso real
+                    R.drawable.user,
                     "UserIcon",
-                    Modifier.padding(end = 4.dp) // Ajuste menor de padding si es necesario
+                    Modifier.padding(end = 4.dp)
                 )
             },
 

@@ -20,6 +20,7 @@ import com.example.sistemaventilacion.R
 import com.example.sistemaventilacion.ui.uielements.composables.ImageElement
 import com.example.sistemaventilacion.ui.uielements.composables.TopBar
 import android.widget.Toast
+import com.example.sistemaventilacion.ui.uielements.composables.BottomAppBar
 
 
 @Composable
@@ -33,7 +34,8 @@ fun AgendarActivacionScreen(navController: NavHostController) {
                 canGoBack = true,
                 inclusive = false
             )
-        }
+        },
+        bottomBar = { BottomAppBar(navController = navController) }
     ) { innerPadding ->
         ActivacionSistemaStructure(Modifier.padding(innerPadding))
     }
@@ -56,7 +58,8 @@ fun ActivacionSistemaStructure(modifier: Modifier) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth
+                (),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Form(
