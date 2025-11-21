@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "327632531695",
+    "firebase_url": "https://pruebaandroidiot-default-rtdb.firebaseio.com",
+    "project_id": "pruebaandroidiot",
+    "storage_bucket": "pruebaandroidiot.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:327632531695:android:2bcaa1984b0fc5ae4eeb1a",
+        "android_client_info": {
+          "package_name": "com.example.sistemaventilacion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbPNzKAKXXO5nsPl3uVinH1vS35A1wbVY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
