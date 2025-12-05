@@ -23,10 +23,11 @@ fun ActivacionSistemaScreen(navController: NavHostController) {
         topBar = {
             TopBar(
                 navController = navController,
-                name = "ActSisScreen",
-                nameRoute = "Hub",
-                canGoBack = true,
-                inclusive = false
+                "ActSisScreen",
+                "Hub",
+                true,
+                true,
+
             )
         },
         bottomBar = { BottomAppBar(navController = navController)}
