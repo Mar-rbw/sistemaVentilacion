@@ -27,6 +27,7 @@ import android.widget.Toast
 import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.HorizontalDivider
 
 
 @Composable
@@ -375,7 +376,11 @@ fun ButtonExpansibleWithOptions(
                     })
                     // Agrega el divisor solo si no es el último elemento
                     if (index < options.lastIndex) {
-                        Divider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f))
+                        HorizontalDivider(
+                            Modifier,
+                            DividerDefaults.Thickness,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f)
+                        )
                     }
                 }
             }

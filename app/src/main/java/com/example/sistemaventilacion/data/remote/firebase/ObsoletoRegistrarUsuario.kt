@@ -1,7 +1,6 @@
 package com.example.sistemaventilacion.data.remote.firebase
 
 import com.example.sistemaventilacion.dataclass.PerfilUsuario
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
 

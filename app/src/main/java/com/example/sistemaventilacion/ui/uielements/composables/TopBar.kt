@@ -2,12 +2,22 @@ package com.example.sistemaventilacion.ui.uielements.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.sistemaventilacion.R
 
@@ -17,31 +27,61 @@ import com.example.sistemaventilacion.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
-    navController: NavHostController,
-    name: String,
-    nameRoute: String,
+    navController: NavController,
+    title: String,
+    backDestination: String? = null,
+    loginRoute: Boolean = true,
     canGoBack: Boolean = true,
-    inclusive: Boolean
+    inclusivePop: Boolean = false,
 ) {
-    val debouncedPopBack = RememberDebouncedAction {
-        navController.popBackStack(nameRoute, inclusive)
+    val debouncedGoBack = RememberDebouncedAction {
+        backDestination?.let {
+            navController.popBackStack(it, inclusivePop)
+        } ?: navController.popBackStack()
     }
-    TopAppBar(
+
+    val debouncedLogout = RememberDebouncedAction {
+        navController.navigate(loginRoute) {
+            popUpTo(0) { inclusive = true }
+        }
+    }
+
+    CenterAlignedTopAppBar(
         title = {
-            Text(text = name)
+            Text(
+                text = title,
+                color = Color.White
+            )
         },
+
         navigationIcon = {
             if (canGoBack) {
                 ImageElement(
                     R.drawable.backbutton,
                     "LogoBackButton",
                     modifier = Modifier
+                        .padding(15.dp)
                         .clickable {
-                            debouncedPopBack
+                            debouncedGoBack()
                         }
-                        .padding(8.dp)
                 )
             }
-        }
+        },
+
+        actions = {
+            IconButton(onClick = { debouncedLogout() }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Logout,
+                    contentDescription = "Cerrar sesión",
+                    tint = Color.White
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color(0xFF1976D2),
+            titleContentColor = Color.White,
+            navigationIconContentColor = Color.White,
+            actionIconContentColor = Color.White
+        )
     )
 }
