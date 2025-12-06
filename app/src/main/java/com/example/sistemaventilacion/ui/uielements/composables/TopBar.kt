@@ -69,12 +69,14 @@ fun TopBar(
         },
 
         actions = {
-            IconButton(onClick = { debouncedLogout() }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Logout,
-                    contentDescription = "Cerrar sesión",
-                    tint = Color.White
-                )
+            if(canGoBack){
+                IconButton(onClick = { debouncedLogout() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Logout,
+                        contentDescription = "Cerrar sesión",
+                        tint = Color.White
+                    )
+                }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(

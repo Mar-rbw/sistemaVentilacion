@@ -1,5 +1,7 @@
-package com.example.sistemaventilacion.ui.uielements.Hub
+package com.example.sistemaventilacion.ui.uielements.hub
 
+import android.content.Context
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -8,41 +10,72 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.sistemaventilacion.R
 import com.example.sistemaventilacion.dataclass.OptionItem
 import com.example.sistemaventilacion.ui.uielements.composables.BottomAppBar
-import com.example.sistemaventilacion.ui.uielements.composables.TopBar
 import com.example.sistemaventilacion.ui.uielements.composables.ImageElement
-import androidx.compose.ui.platform.LocalContext
-import android.widget.Toast
-import android.content.Context
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.HorizontalDivider
-
+import com.example.sistemaventilacion.ui.uielements.composables.TopBar
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun HubScreen(navController: NavHostController) {
     Scaffold(
-        topBar = { TopBar(
-            navController = navController,
-            name = "HubScreen",
-            nameRoute = "Auth",
-            canGoBack = true,
-            inclusive = false
-        )},
-        bottomBar = {BottomAppBar(
-            navController = navController
-        )}
+        topBar = {
+            TopBar(
+                navController,
+                "HubScreen",
+                "Auth",
+                loginRoute = true,
+                canGoBack = false,
+                inclusivePop = true
+            )
+        },
+        bottomBar = {
+            BottomAppBar(
+                navController = navController,
+                selected = "Hub",
+                onSelected = { navController.navigate(it) })
+        }
     ) { paddingValues ->
         HubStructure(navController, modifier = Modifier.padding(paddingValues))
     }
@@ -51,14 +84,13 @@ fun HubScreen(navController: NavHostController) {
 @Composable
 fun HubStructure(navController: NavHostController, modifier: Modifier) {
     val context = LocalContext.current
-
-
     var selectedOption by rememberSaveable { mutableStateOf<OptionItem?>(null) }
 
-    Column(modifier = modifier
-        .fillMaxSize()
-        .padding(horizontal = 16.dp)) {
-
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+    ) {
         Header(navController)
         Spacer(modifier = Modifier.height(16.dp))
         SubtitleHub()
@@ -67,35 +99,38 @@ fun HubStructure(navController: NavHostController, modifier: Modifier) {
         ColumnContent(
             navController = navController,
             context = context,
-            onOptionClicked = { selectedOption = it } // Al hacer clic en una opción, se abre la tarjeta
+            onOptionClicked = { selectedOption = it }
         )
     }
 
-    if (selectedOption != null) {
+    selectedOption?.let { option ->
         OptionSettingsCard(
-            option = selectedOption!!,
+            option = option,
             onClose = { selectedOption = null }
         )
     }
 }
-
 
 @Composable
 fun OptionSettingsCard(option: OptionItem, onClose: () -> Unit) {
     val context = LocalContext.current
     var inputState by rememberSaveable { mutableStateOf("") }
 
-
     AlertDialog(
         onDismissRequest = onClose,
-        icon = { Icon(Icons.Default.Warning, contentDescription = "Configuración", tint = MaterialTheme.colorScheme.primary) },
+        icon = {
+            Icon(
+                Icons.Default.Warning,
+                contentDescription = "Configuración",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        },
         title = { Text("Configurar: ${option.title}") },
         text = {
             Column {
                 Text(option.description ?: "Ajuste la configuración de esta opción.")
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Campo de entrada simulado para Modificar/Agregar
                 OutlinedTextField(
                     value = inputState,
                     onValueChange = { inputState = it },
@@ -106,7 +141,6 @@ fun OptionSettingsCard(option: OptionItem, onClose: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Botones de acción (Default/Agregar)
                 Row(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth()
@@ -118,20 +152,35 @@ fun OptionSettingsCard(option: OptionItem, onClose: () -> Unit) {
                         Text("Default")
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    TextButton(onClick = {
-                        Toast.makeText(context, "Nueva configuración agregada: $inputState", Toast.LENGTH_SHORT).show()
-                    }) {
+                    TextButton(
+                        onClick = {
+                            if (inputState.isNotBlank()) {
+                                Toast.makeText(
+                                    context,
+                                    "Nueva configuración agregada: $inputState",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        },
+                        enabled = inputState.isNotBlank()
+                    ) {
                         Text("Agregar")
                     }
                 }
             }
         },
         confirmButton = {
-            Button(onClick = {
-                // Lógica de Guardar: Simplemente mostramos el Toast y cerramos.
-                Toast.makeText(context, "Configuración de ${option.title} guardada: $inputState", Toast.LENGTH_SHORT).show()
-                onClose()
-            }) {
+            Button(
+                onClick = {
+                    Toast.makeText(
+                        context,
+                        "Configuración de ${option.title} guardada: $inputState",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    onClose()
+                },
+                enabled = inputState.isNotBlank()
+            ) {
                 Text("Guardar y Cerrar")
             }
         },
@@ -143,18 +192,21 @@ fun OptionSettingsCard(option: OptionItem, onClose: () -> Unit) {
     )
 }
 
-/*
-* Función a cargo de estructurar el encabezado de "HubActivity"
-*/
 @Composable
-fun Header(navController: NavHostController){
+fun Header(navController: NavHostController) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         HubImageLogo()
-        Column(modifier = Modifier.weight(1f).padding(horizontal = 8.dp)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 8.dp)
+        ) {
             TitleHub()
         }
         LogOutHub(navController)
@@ -162,41 +214,32 @@ fun Header(navController: NavHostController){
 }
 
 @Composable
-fun HubImageLogo(){
-    val logo = painterResource(R.drawable.imagenlogoasset)
+fun HubImageLogo() {
     Image(
-        painter = logo,
+        painter = painterResource(R.drawable.logozeusair),
         contentDescription = "Logo App",
         modifier = Modifier.size(48.dp)
     )
 }
 
 @Composable
-fun HubLogoLogOut(){
-    val logo = painterResource(R.drawable.poweroff)
+fun HubLogoLogOut() {
     Image(
-        painter = logo,
+        painter = painterResource(R.drawable.poweroff),
         contentDescription = "Cerrar Sesión",
         modifier = Modifier.size(24.dp)
     )
 }
 
-/*
-* Función a cargo de crear el botón de LogOut y su LÓGICA
-*/
 @Composable
-fun LogOutHub(navController: NavHostController){
+fun LogOutHub(navController: NavHostController) {
     val context = LocalContext.current
+
     Button(
         onClick = {
-            // 1. Placeholder para la lógica de Firebase Sign Out
-            // FirebaseAuth.getInstance().signOut()
-
-            Toast.makeText(context, "Cerrando sesión...", Toast.LENGTH_SHORT).show()
-
-            // 2. Navegación: Volver a la pantalla de autenticación ("Auth")
+            FirebaseAuth.getInstance().signOut()
+            Toast.makeText(context, "Sesión cerrada", Toast.LENGTH_SHORT).show()
             navController.navigate("Auth") {
-                // Borra la pila de navegación para que el usuario no pueda volver al Hub
                 popUpTo("HubScreen") { inclusive = true }
             }
         },
@@ -207,81 +250,79 @@ fun LogOutHub(navController: NavHostController){
     }
 }
 
-/*Función a cargo de presentar el titulo y subtitulo*/
 @Composable
 fun TitleHub() {
-    // <<< Tipografía restaurada
     Text("Bienvenido", style = MaterialTheme.typography.titleMedium)
     Text("ZeusApp", style = MaterialTheme.typography.headlineSmall)
 }
 
-/*
-* Función a cargo de presentar el subtitulo
-*/
 @Composable
 fun SubtitleHub() {
     Column {
-        // <<< Tipografía restaurada
         Text("¿Qué desea hacer?", style = MaterialTheme.typography.titleSmall)
-        Text("Seleccione una opción para configurar el sistema", style = MaterialTheme.typography.bodySmall)
+        Text(
+            "Seleccione una opción para configurar el sistema",
+            style = MaterialTheme.typography.bodySmall
+        )
     }
 }
-
-// -------------------------------------------------------------------
-// CONTENIDO PRINCIPAL Y BOTONES
-// -------------------------------------------------------------------
 
 @Composable
 fun ColumnContent(
     navController: NavHostController,
     context: Context,
-    onOptionClicked: (OptionItem) -> Unit // NUEVO: Handler de click para abrir la Card
-){
-    // Las opciones ahora solo definen la metadata, el click real lo maneja el padre
-    val ventilacionOptions = listOf(
-        OptionItem(
-            title = "Activación Inmediata",
-            description = "Encender/Apagar el sistema de ventilación.",
-            icon = null,
-            onClick = { navController.navigate("ActivacionSistema") } // Acción final
-        ),
-        OptionItem(
-            title = "Agendar Tarea",
-            description = "Programar encendido y apagado automáticos.",
-            icon = { ImageElement(R.drawable.poweron, "logoPowerOn") },
-            onClick = { navController.navigate("AgendarActivacion") } // Acción final
+    onOptionClicked: (OptionItem) -> Unit
+) {
+    val ventilacionOptions = remember {
+        listOf(
+            OptionItem(
+                title = "Activación Inmediata",
+                description = "Encender/Apagar el sistema de ventilación.",
+                icon = null,
+                onClick = { navController.navigate("ControlScreen") }
+            ),
+            OptionItem(
+                title = "Agendar Tarea",
+                description = "Programar encendido y apagado automáticos.",
+                icon = { ImageElement(R.drawable.poweron, "logoPowerOn") },
+                onClick = { navController.navigate("AgendarActivacion") }
+            )
         )
-    )
+    }
 
-    val notificacionesOptions = listOf(
-        OptionItem("Temp. Mínima", "Notificar si baja de 15°C", null,
-            { Toast.makeText(context, "Configurar Temp", Toast.LENGTH_SHORT).show() }), // Acción final
-    )
+    val notificacionesOptions = remember {
+        listOf(
+            OptionItem(
+                "Temp. Mínima",
+                "Notificar si baja de 15°C",
+                null
+            ) {
+                Toast.makeText(context, "Configurar Temp", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
 
     ButtonExpansibleWithOptions(
         title = "Control de Ventilación",
         subtitle = "Configurar modos y horarios de operación.",
-        icon = R.drawable.imagenlogoasset,
+        icon = R.drawable.logozeusair,
         options = ventilacionOptions,
-        onOptionClicked = onOptionClicked // Se pasa el handler a la función expansible
+        onOptionClicked = onOptionClicked
     )
+
     Spacer(modifier = Modifier.height(16.dp))
 
     ButtonExpansibleWithOptions(
         title = "Notificaciones y Alarmas",
         subtitle = "Ajustar umbrales de temperatura y humedad.",
-        icon = R.drawable.imagenlogoasset,
+        icon = R.drawable.logozeusair,
         options = notificacionesOptions,
-        onOptionClicked = onOptionClicked // Se pasa el handler
+        onOptionClicked = onOptionClicked
     )
 }
 
-// -------------------------------------------------------------------
-// COMPOSABLES REUTILIZABLES (Estilos restaurados)
-// -------------------------------------------------------------------
-
 @Composable
-fun ButtonTitle(title: String){
+fun ButtonTitle(title: String) {
     Text(
         text = title,
         style = MaterialTheme.typography.titleMedium
@@ -289,7 +330,7 @@ fun ButtonTitle(title: String){
 }
 
 @Composable
-fun ButtonSubtitle(subtitle: String){
+fun ButtonSubtitle(subtitle: String) {
     Text(
         text = subtitle,
         style = MaterialTheme.typography.bodySmall,
@@ -299,19 +340,17 @@ fun ButtonSubtitle(subtitle: String){
 
 @Composable
 fun ButtonIcon(@DrawableRes iconRes: Int) {
-    val icon = painterResource(iconRes)
     Image(
-        painter = icon,
+        painter = painterResource(iconRes),
         contentDescription = null,
         modifier = Modifier.size(24.dp)
     )
 }
 
 @Composable
-fun ButtonElement(){
-    val element = painterResource(R.drawable.displaybutton)
+fun ButtonElement() {
     Image(
-        painter = element,
+        painter = painterResource(R.drawable.displaybutton),
         contentDescription = "Expandir",
         modifier = Modifier.size(24.dp)
     )
@@ -322,11 +361,11 @@ fun ButtonElement(){
 fun ButtonExpansibleWithOptions(
     title: String,
     subtitle: String,
-    icon: Int,
+    @DrawableRes icon: Int,
     options: List<OptionItem>,
     modifier: Modifier = Modifier,
-    onOptionClicked: (OptionItem) -> Unit // NUEVA FIRMA: El click solo notifica
-){
+    onOptionClicked: (OptionItem) -> Unit
+) {
     var expandir by rememberSaveable { mutableStateOf(false) }
 
     Column(modifier = modifier.fillMaxWidth()) {
@@ -370,15 +409,17 @@ fun ButtonExpansibleWithOptions(
                     .padding(horizontal = 16.dp, vertical = 4.dp)
             ) {
                 options.forEachIndexed { index, option ->
-                    OptionButton(optionItem = option, onClick = {
-                        onOptionClicked(option) // <<< CAMBIO: Notifica al padre en lugar de ejecutar la acción final
-                        expandir = false // Cierra el menú al seleccionar
-                    })
-                    // Agrega el divisor solo si no es el último elemento
+                    OptionButton(
+                        optionItem = option,
+                        onClick = {
+                            onOptionClicked(option)
+                            expandir = false
+                        }
+                    )
                     if (index < options.lastIndex) {
                         HorizontalDivider(
-                            Modifier,
-                            DividerDefaults.Thickness,
+                            modifier = Modifier,
+                            thickness = DividerDefaults.Thickness,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f)
                         )
                     }
@@ -410,18 +451,18 @@ fun OptionButton(
                     text = optionItem.title,
                     style = MaterialTheme.typography.bodyLarge
                 )
-                if (optionItem.description != null) {
+                optionItem.description?.let { desc ->
                     Text(
-                        text = optionItem.description,
+                        text = desc,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
-            if (optionItem.icon != null) {
+            optionItem.icon?.let { iconComposable ->
                 Spacer(modifier = Modifier.width(8.dp))
-                optionItem.icon.invoke()
+                iconComposable()
             }
         }
     }

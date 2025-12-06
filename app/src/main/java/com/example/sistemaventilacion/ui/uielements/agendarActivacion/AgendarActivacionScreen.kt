@@ -1,4 +1,4 @@
-package com.example.sistemaventilacion.ui.uielements.AgendarActivacion
+package com.example.sistemaventilacion.ui.uielements.agendarActivacion
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -21,6 +21,7 @@ import com.example.sistemaventilacion.ui.uielements.composables.ImageElement
 import com.example.sistemaventilacion.ui.uielements.composables.TopBar
 import android.widget.Toast
 import com.example.sistemaventilacion.ui.uielements.composables.BottomAppBar
+import java.util.Locale
 
 
 @Composable
@@ -29,13 +30,19 @@ fun AgendarActivacionScreen(navController: NavHostController) {
         topBar = {
             TopBar(
                 navController = navController,
-                name = "Agendar Tarea",
-                nameRoute = "HubScreen",
-                canGoBack = true,
-                inclusive = false
+                "AgeActScreen",
+                "Hub",
+                loginRoute = true,
+                canGoBack = true
             )
         },
-        bottomBar = { BottomAppBar(navController = navController) }
+        bottomBar = {
+            BottomAppBar(
+                navController = navController,
+                selected = "AgendarActivacion",
+                onSelected = { navController.navigate(it) }
+            )
+        }
     ) { innerPadding ->
         ActivacionSistemaStructure(Modifier.padding(innerPadding))
     }
@@ -58,8 +65,7 @@ fun ActivacionSistemaStructure(modifier: Modifier) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Card(
-            modifier = Modifier.fillMaxWidth
-                (),
+            modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Form(
@@ -76,17 +82,33 @@ fun ActivacionSistemaStructure(modifier: Modifier) {
 
         Button(
             onClick = {
-                if (dateState.isNotEmpty() && timeState.isNotEmpty() && duracionState.isNotEmpty()) {
+                val hasAllFields = dateState.isNotEmpty() &&
+                        timeState.isNotEmpty() &&
+                        duracionState.isNotEmpty()
+
+                if (hasAllFields) {
+                    val message = String.format(
+                        Locale.getDefault(),
+                        "Tarea agendada: %s a las %s por %s min",
+                        dateState,
+                        timeState,
+                        duracionState
+                    )
+                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                } else {
                     Toast.makeText(
                         context,
-                        "Tarea agendada: ${dateState} a las ${timeState} por ${duracionState} min",
-                        Toast.LENGTH_LONG
+                        "Por favor, complete todos los campos.",
+                        Toast.LENGTH_SHORT
                     ).show()
-                } else {
-                    Toast.makeText(context, "Por favor, complete todos los campos.", Toast.LENGTH_SHORT).show()
                 }
             },
-            modifier = Modifier.fillMaxWidth().height(56.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            enabled = dateState.isNotEmpty() &&
+                    timeState.isNotEmpty() &&
+                    duracionState.isNotEmpty()
         ) {
             Text("Agendar Tarea")
         }
@@ -94,14 +116,14 @@ fun ActivacionSistemaStructure(modifier: Modifier) {
 }
 
 @Composable
-fun Header(){
+fun Header() {
     Column(modifier = Modifier.padding(vertical = 16.dp)) {
         Text(
-            "Agendar Activación",
+            text = "Agendar Activación",
             style = MaterialTheme.typography.headlineSmall
         )
         Text(
-            "Programe la activación automática del sistema de ventilación.",
+            text = "Programe la activación automática del sistema de ventilación.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -116,7 +138,7 @@ fun Form(
     onTimeSelected: (String) -> Unit,
     duracionState: String,
     onDuracionChange: (String) -> Unit
-){
+) {
     Column(modifier = Modifier.padding(16.dp)) {
         Title()
 
@@ -126,15 +148,28 @@ fun Form(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            DatePicker(onDateSelected = onDateSelected, selectedDate = dateState)
-            TimePicker(onTimeSelected = onTimeSelected, selectedTime = timeState)
+            DatePicker(
+                onDateSelected = onDateSelected,
+                selectedDate = dateState
+            )
+            TimePicker(
+                onTimeSelected = onTimeSelected,
+                selectedTime = timeState
+            )
         }
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text("Duración de la Tarea", style = MaterialTheme.typography.titleMedium)
-            Text("Defina el tiempo de operación del sistema (minutos).", style = MaterialTheme.typography.bodySmall)
+            Text(
+                text = "Duración de la Tarea",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "Defina el tiempo de operación del sistema (minutos).",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
             Spacer(modifier = Modifier.height(8.dp))
 
             TextFieldNumberFormatter(
@@ -153,15 +188,18 @@ fun Title() {
         ImageElement(
             R.drawable.calendar,
             "CalendarLogo",
-            modifier = Modifier.size(40.dp)
+            Modifier.size(40.dp)
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column {
             Text(
-                "Programar Activación",
+                text = "Programar Activación",
+                style = MaterialTheme.typography.titleMedium
             )
             Text(
-                "Configure fecha, hora y duración",
+                text = "Configure fecha, hora y duración",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -172,45 +210,69 @@ fun DatePicker(onDateSelected: (String) -> Unit, selectedDate: String) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
 
-    val datePickerDialog = DatePickerDialog(
-        context,
-        { _, year, month, dayOfMonth ->
-            onDateSelected("$dayOfMonth/${month + 1}/$year")
-        },
-        calendar.get(Calendar.YEAR),
-        calendar.get(java.util.Calendar.MONTH),
-        calendar.get(Calendar.DAY_OF_MONTH)
-    )
+    val datePickerDialog = remember {
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                val formattedDate = String.format(
+                    Locale.getDefault(),
+                    "%02d/%02d/%d",
+                    dayOfMonth,
+                    month + 1,
+                    year
+                )
+                onDateSelected(formattedDate)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+    }
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         OutlinedButton(onClick = { datePickerDialog.show() }) {
             Text("Seleccionar fecha")
         }
         Spacer(modifier = Modifier.height(4.dp))
-        Text(selectedDate.ifEmpty { "Sin fecha" }, style = MaterialTheme.typography.bodyMedium)
+        Text(
+            text = selectedDate.ifEmpty { "Sin fecha" },
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 }
 
 @Composable
-fun TimePicker(onTimeSelected: (String) -> Unit, selectedTime: String){
+fun TimePicker(onTimeSelected: (String) -> Unit, selectedTime: String) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
 
-    val timePickerDialog = TimePickerDialog(
-        context,
-        { _, hour, minute ->
-            onTimeSelected(String.format("%02d:%02d", hour, minute))
-        },
-        calendar.get(Calendar.HOUR_OF_DAY),
-        calendar.get(Calendar.MINUTE),
-        true // 24-hour view
-    )
+    val timePickerDialog = remember {
+        TimePickerDialog(
+            context,
+            { _, hour, minute ->
+                val formattedTime = String.format(
+                    Locale.getDefault(),
+                    "%02d:%02d",
+                    hour,
+                    minute
+                )
+                onTimeSelected(formattedTime)
+            },
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE),
+            true // 24-hour view
+        )
+    }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(onClick = { timePickerDialog.show()}) {
+        Button(onClick = { timePickerDialog.show() }) {
             Text("Seleccionar hora")
         }
         Spacer(modifier = Modifier.height(4.dp))
-        Text(selectedTime.ifEmpty { "Sin hora" })
+        Text(
+            text = selectedTime.ifEmpty { "Sin hora" },
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 }
 
@@ -218,13 +280,13 @@ fun TimePicker(onTimeSelected: (String) -> Unit, selectedTime: String){
 fun TextFieldNumberFormatter(
     value: String,
     onValueChange: (String) -> Unit,
-    textLabel: String, // Etiqueta principal
-    textInput: String, // Placeholder
-){
-    TextField(
+    textLabel: String,
+    textInput: String
+) {
+    OutlinedTextField(
         value = value,
         onValueChange = { newValue ->
-            if (newValue.all {it.isDigit()} || newValue.isEmpty()) {
+            if (newValue.all { it.isDigit() } || newValue.isEmpty()) {
                 onValueChange(newValue)
             }
         },

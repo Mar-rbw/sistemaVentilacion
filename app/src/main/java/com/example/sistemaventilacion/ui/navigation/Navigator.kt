@@ -5,16 +5,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.screens.ControlScreen
-import com.example.myapplication.screens.HistoryScreen
-import com.example.sistemaventilacion.ui.uielements.MonitorScreen
-import com.example.sistemaventilacion.ui.uielements.ActivacionSistema.ActivacionSistemaScreen
-import com.example.sistemaventilacion.ui.uielements.AgendarActivacion.AgendarActivacionScreen
-import com.example.sistemaventilacion.ui.uielements.Auth.AuthLoginScreen
-import com.example.sistemaventilacion.ui.uielements.Auth.AuthRegisterScreen
-import com.example.sistemaventilacion.ui.uielements.Auth.AuthScreen
-import com.example.sistemaventilacion.ui.uielements.Hub.HubScreen
-import com.example.sistemaventilacion.ui.uielements.NotificacionHumedad.NotificacionHumedadScreen
-import com.example.sistemaventilacion.ui.uielements.NotificacionTemperatura.NotificacionTemperaturaScreen
+import com.example.sistemaventilacion.ui.uielements.HistoryScreen
+//import com.example.sistemaventilacion.ui.uielements.MonitorScreen
+import com.example.sistemaventilacion.ui.uielements.activacionSistema.ActivacionSistemaScreen
+import com.example.sistemaventilacion.ui.uielements.agendarActivacion.AgendarActivacionScreen
+import com.example.sistemaventilacion.ui.uielements.auth.AuthLoginScreen
+import com.example.sistemaventilacion.ui.uielements.auth.AuthRegisterScreen
+import com.example.sistemaventilacion.ui.uielements.auth.AuthScreen
+import com.example.sistemaventilacion.ui.uielements.hub.HubScreen
+import com.example.sistemaventilacion.ui.uielements.notificacionHumedad.NotificacionHumedadScreen
+import com.example.sistemaventilacion.ui.uielements.notificacionHumedad.NotificacionTemperaturaScreen
 
 @Composable
 fun NavegacionApp() {
@@ -54,8 +54,8 @@ fun NavegacionApp() {
         composable("Historia") {
             HistoryScreen(navController)
         }
-        composable("Monitoreo") {
-            MonitorScreen(navController)
-        }
+//        composable("Monitoreo") {
+//            MonitorScreen(navController)
+//        }
     }
 }

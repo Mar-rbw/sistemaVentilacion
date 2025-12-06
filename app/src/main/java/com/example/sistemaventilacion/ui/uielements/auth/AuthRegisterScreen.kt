@@ -1,4 +1,4 @@
-package com.example.sistemaventilacion.ui.uielements.Auth
+package com.example.sistemaventilacion.ui.uielements.auth
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -32,13 +32,15 @@ fun AuthRegisterScreen(navController: NavHostController) {
     Scaffold(
         topBar = { TopBar(
             navController,
-            name = "AuthLoginScreen",
-            nameRoute = "Auth",
-            canGoBack = true,
-            inclusive = false,
+            "AuthLoginScreen",
+            "Auth",
+            loginRoute = true,
+            canGoBack = false,
         ) },
         bottomBar = { BottomAppBar(
-            navController = navController
+            navController = navController,
+            selected = "AuthRegister",
+            onSelected = { navController.navigate(it) }
         ) }
     ) { paddingValues ->
         AuthRegisterStructure(navController,modifier = Modifier.padding(paddingValues))

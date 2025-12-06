@@ -1,4 +1,4 @@
-package com.example.sistemaventilacion.ui.uielements.ActivacionSistema
+package com.example.sistemaventilacion.ui.uielements.activacionSistema
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -23,21 +23,28 @@ fun ActivacionSistemaScreen(navController: NavHostController) {
         topBar = {
             TopBar(
                 navController = navController,
-                "ActSisScreen",
+                title = "ActSisScreen",
                 "Hub",
-                true,
-                true,
-
+                loginRoute = true,
+                canGoBack = true
             )
         },
-        bottomBar = { BottomAppBar(navController = navController)}
+        bottomBar = {
+            BottomAppBar(
+                navController = navController,
+                selected = "ActivacionSistema",
+                onSelected = { navController.navigate(it) }
+            )
+        }
     ) { paddingValues ->
-        ActivacionSistemaStructure(navController, modifier = Modifier.padding(paddingValues))
+        ActivacionSistemaStructure(
+            modifier = Modifier.padding(paddingValues)
+        )
     }
 }
 
 @Composable
-fun ActivacionSistemaStructure(navController: NavHostController, modifier: Modifier) {
+fun ActivacionSistemaStructure(modifier: Modifier) {
     val context = LocalContext.current
 
     var humedadState by rememberSaveable { mutableStateOf("") }
@@ -58,7 +65,10 @@ fun ActivacionSistemaStructure(navController: NavHostController, modifier: Modif
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
 
-                FormularioText(title = "Humedad", subtitle = "Defina el umbral de humedad para la activación.")
+                FormularioText(
+                    title = "Humedad",
+                    subtitle = "Defina el umbral de humedad para la activación."
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextFieldNumberFormatter(
                     value = humedadState,
@@ -69,7 +79,10 @@ fun ActivacionSistemaStructure(navController: NavHostController, modifier: Modif
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                FormularioText(title = "Temperatura", subtitle = "Defina el umbral de temperatura para la activación.")
+                FormularioText(
+                    title = "Temperatura",
+                    subtitle = "Defina el umbral de temperatura para la activación."
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextFieldNumberFormatter(
                     value = temperaturaState,
@@ -80,7 +93,10 @@ fun ActivacionSistemaStructure(navController: NavHostController, modifier: Modif
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                FormularioText(title = "Duración", subtitle = "Tiempo de operación del sistema una vez activado (minutos).")
+                FormularioText(
+                    title = "Duración",
+                    subtitle = "Tiempo de operación del sistema una vez activado (minutos)."
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextFieldNumberFormatter(
                     value = duracionState,
@@ -103,48 +119,81 @@ fun ActivacionSistemaStructure(navController: NavHostController, modifier: Modif
                     humedadState = "70"
                     temperaturaState = "25"
                     duracionState = "15"
-                    Toast.makeText(context, "Valores por defecto cargados", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Valores por defecto cargados",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             )
             ButtonSaveField(
                 onClick = {
-                    Toast.makeText(context, "Configuración Guardada: H:$humedadState, T:$temperaturaState, D:$duracionState", Toast.LENGTH_LONG).show()
-                }
+                    val hasAllValues = humedadState.isNotBlank() &&
+                            temperaturaState.isNotBlank() &&
+                            duracionState.isNotBlank()
+
+                    if (hasAllValues) {
+                        Toast.makeText(
+                            context,
+                            "Configuración Guardada: H:$humedadState%, T:$temperaturaState°C, D:$duracionState min",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Por favor complete todos los campos",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                },
+                enabled = humedadState.isNotBlank() &&
+                        temperaturaState.isNotBlank() &&
+                        duracionState.isNotBlank()
             )
         }
     }
 }
 
 @Composable
-fun Header(){
+fun Header() {
     Column(modifier = Modifier.padding(vertical = 16.dp)) {
         Text(
-            "Umbral de Activación",
+            text = "Umbral de Activación",
+            style = MaterialTheme.typography.titleLarge
         )
         Text(
-            "Configure los parámetros que activarán el sistema de ventilación.",
+            text = "Configure los parámetros que activarán el sistema de ventilación.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
 
 @Composable
-fun FormularioText(title: String, subtitle: String){
+fun FormularioText(title: String, subtitle: String) {
     Column {
         Text(
-            title,
+            text = title,
+            style = MaterialTheme.typography.titleMedium
         )
         Text(
-            subtitle,
+            text = subtitle,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
 
 @Composable
-fun ButtonSaveField(onClick: () -> Unit) {
+fun ButtonSaveField(
+    onClick: () -> Unit,
+    enabled: Boolean = true
+) {
     Button(
         onClick = onClick,
         modifier = Modifier,
-        contentPadding = PaddingValues(horizontal = 16.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        enabled = enabled
     ) {
         Text("Guardar Configuración")
     }
@@ -154,7 +203,9 @@ fun ButtonSaveField(onClick: () -> Unit) {
 fun ButtonBackDefault(onClick: () -> Unit) {
     TextButton(
         onClick = onClick,
-        modifier = Modifier.padding(end = 16.dp).height(56.dp)
+        modifier = Modifier
+            .padding(end = 16.dp)
+            .height(56.dp)
     ) {
         Text("Valores por Defecto")
     }
@@ -165,12 +216,13 @@ fun TextFieldNumberFormatter(
     value: String,
     onValueChange: (String) -> Unit,
     textLabel: String,
-    textInput: String,
-){
+    textInput: String
+) {
     OutlinedTextField(
         value = value,
         onValueChange = { newValue ->
-            if (newValue.all {it.isDigit() || it == '-' } || newValue.isEmpty()) {
+            // Permite números, punto decimal y signo negativo
+            if (newValue.all { it.isDigit() || it == '.' || it == '-' } || newValue.isEmpty()) {
                 onValueChange(newValue)
             }
         },
