@@ -32,10 +32,10 @@ fun AuthRegisterScreen(navController: NavHostController) {
     Scaffold(
         topBar = { TopBar(
             navController,
-            "AuthLoginScreen",
+            "AuthRegisterScreen",
             "Auth",
             loginRoute = true,
-            canGoBack = false,
+            canGoBack = true,
         ) },
         bottomBar = { BottomAppBar(
             navController = navController,
