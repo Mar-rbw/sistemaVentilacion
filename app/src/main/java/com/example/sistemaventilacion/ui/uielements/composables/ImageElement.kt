@@ -4,7 +4,13 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+
+sealed interface IconSource {
+    data class Vector(val imageVector: ImageVector): IconSource
+    data class Resource(@DrawableRes val resId: Int): IconSource
+}
 
 @Composable
 fun ImageElement(

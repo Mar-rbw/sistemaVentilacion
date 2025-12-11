@@ -2,6 +2,7 @@ package com.example.sistemaventilacion.ui.uielements.composables
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -14,7 +15,7 @@ fun TextFieldNumberFormatter(
     onValueChange: (String) -> Unit,
     textLabel: String,
     textInput: String,
-    idElement: Int,
+    iconSource: IconSource,
     descripcion: String,
     modifierColumn: Modifier = Modifier,
     modifierTextField: Modifier = Modifier,
@@ -31,11 +32,22 @@ fun TextFieldNumberFormatter(
             label = { Text(textLabel) },
             placeholder = { Text(textInput) },
             leadingIcon = {
-                ImageElement(
-                    idElement,
-                    descripcion,
-                    modifierLeadingIcon
-                )
+                when (iconSource) {
+                    is IconSource.Vector -> {
+                        Icon(
+                            imageVector = iconSource.imageVector,
+                            contentDescription = descripcion,
+                            modifier = modifierLeadingIcon
+                        )
+                    }
+                    is IconSource.Resource -> {
+                        ImageElement(
+                            elementId = iconSource.resId,
+                            description = descripcion,
+                            modifier = modifierLeadingIcon
+                        )
+                    }
+                }
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number

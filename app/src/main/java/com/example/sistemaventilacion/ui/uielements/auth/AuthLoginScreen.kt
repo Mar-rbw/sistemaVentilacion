@@ -8,7 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -17,9 +25,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.sistemaventilacion.ui.uielements.composables.BottomAppBar
@@ -29,27 +45,33 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun AuthLoginScreen(navController: NavHostController) {
     Scaffold(
-        topBar = { TopBar(
-            navController,
-            "AuthLoginScreen",
-            "Auth",
-            loginRoute = true,
-            canGoBack = true,
-        ) },
-        bottomBar = { BottomAppBar(
-            navController = navController,
-            selected = "AuthLogin",
-            onSelected = { navController.navigate(it) }
-        ) }
+        topBar = {
+            TopBar(
+                navController,
+                "AuthLoginScreen",
+                "Auth",
+                loginRoute = true,
+                canGoBack = true,
+            )
+        },
+        bottomBar = {
+            BottomAppBar(
+                navController = navController,
+                selected = "AuthLogin",
+                onSelected = { navController.navigate(it) }
+            )
+        }
     ) { paddingValues ->
-        AuthLoginStructure(navController)
+        AuthLoginStructure(navController, modifier = Modifier.padding(paddingValues))
     }
 }
 
 @Composable
 fun AuthLoginStructure(
-    navController: NavController
+    navController: NavController,
+    modifier: Modifier,
 ) {
+    val context = LocalContext.current
     val auth = FirebaseAuth.getInstance()
 
     var email by rememberSaveable { mutableStateOf("") }
@@ -59,14 +81,46 @@ fun AuthLoginStructure(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp),
+            .padding(20.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Text(
+            text = "ZeusApp",
+            fontSize = 35.sp,
+            fontWeight = FontWeight.W600,
+            textAlign = TextAlign.Center,
+            color = Color(0xFF1976D2)
+        )
+        Spacer(modifier = Modifier.padding(5.dp))
+        Text(
+            text = "Cree un perfil para acceder al sistema",
+            fontSize = 25.sp,
+            fontWeight = FontWeight.W500,
+            textAlign = TextAlign.Center,
+            color = Color.Black
+        )
+        Spacer(modifier = Modifier.padding(10.dp))
 
         TextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Correo") }
+            label = { Text("Correo") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Email,
+                    contentDescription = "Email",
+                    tint = Color(0xFF1976D2)
+                )
+            },
+            placeholder = { Text("ejemplo@correo.com") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next
+            ),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -75,41 +129,68 @@ fun AuthLoginStructure(
             value = password,
             onValueChange = { password = it },
             label = { Text("Contraseña") },
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = "Contraseña",
+                    tint = Color(0xFF1976D2)
+                )
+            },
+            placeholder = { Text("Ej: 12345") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = {
-                loading = true
-                auth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        loading = false
-                        if (task.isSuccessful) {
-                            Toast.makeText(
-                                navController.context,
-                                "Login exitoso!",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                            navController.navigate("AuthLogin") {
-                                popUpTo("Hub") { inclusive = true }
+                if (email.isBlank() || password.isBlank()) {
+                    Toast.makeText(
+                        context,
+                        "Correo y contraseña no pueden estar vacíos",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    loading = true
+                    auth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener { task ->
+                            loading = false
+                            if (task.isSuccessful) {
+                                Toast.makeText(
+                                    context,
+                                    "Login exitoso!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                navController.navigate("Hub") {
+                                    popUpTo("AuthLogin") { inclusive = true }
+                                }
+                            } else {
+                                Toast.makeText(
+                                    navController.context,
+                                    "Login fallido: ${task.exception?.message}",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
-
-                        } else {
-                            Toast.makeText(
-                                navController.context,
-                                "Login fallido: ${task.exception?.message}",
-                                Toast.LENGTH_LONG
-                            ).show()
                         }
-                    }
+                }
             },
             modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF1976D2),
+                contentColor = Color.White
+            ),
             enabled = !loading
         ) {
-            Text(if (loading) "Ingresando..." else "Ingresar")
+            Text(if (loading) "Ingresando..." else "Ingresar",
+                fontSize = 25.sp,
+                fontWeight = FontWeight.W400,
+                textAlign = TextAlign.Center,)
         }
     }
 }

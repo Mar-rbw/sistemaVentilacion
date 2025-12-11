@@ -1,36 +1,34 @@
 package com.example.sistemaventilacion.dataclass
 
-import com.google.firebase.Timestamp
+import com.google.firebase.database.Exclude
 
 data class History(
-    val id: String = "",
+    // ID usado localmente/por Firebase, puede excluirse de la serialización si Firebase genera la clave
+    @get:Exclude val id: String = "",
     val timestamp: Long = System.currentTimeMillis(),
     val userId: String = "",
     val userName: String = "",
     val action: String = "",
     val actionType: ActionType = ActionType.OTHER,
-    val previousValie: String? = null,
-    val newValie: String? = null,
-    val deviceInfo: String = "",
-    val  ipAddess: String? = null
-)
+    val previousValue: String? = null,
+    val newValue: String? = null,
+) {
+    constructor() : this(action = "")
+}
 
 enum class ActionType {
- /*Acciones generales*/
-
     REGISTER,
     LOGIN,
-    MODIFIER_PASSWORD,
+    MODIFY_PASSWORD,
     LOGOUT,
     ERROR,
     OTHER,
-
-    /*Acciones funcionalidad principal*/
-    CONTROL_CHANGE,
-
-
-
-
+    /* Acciones de Configuración y Control */
+    CONFIG_CHANGE,
+    /*Acciones de Tareas especifico*/
+    TASK_MANUAL_CONTROL,
+    TASK_SCHEDULED,
+    TASK_DELETED
 }
 
 

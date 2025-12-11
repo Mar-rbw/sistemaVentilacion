@@ -1,18 +1,19 @@
 package com.example.sistemaventilacion.data.remote.firebase
 
-import com.example.sistemaventilacion.dataclass.ActivacionSistema
+import com.example.sistemaventilacion.dataclass.NotificacionHumedad
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
 
-fun ActivacionRepository(
-    activacion: ActivacionSistema,
+
+fun notificacionHumedadRepository(
+    humedad: NotificacionHumedad,
     userId: String,
     onResult: (Boolean, String) -> Unit
 ) {
     val database = Firebase.database
-    val activeRef = database.getReference("activacion").child(userId)
+    val humidityRef = database.getReference("notHum").child(userId)
 
-    activeRef.setValue(activacion)
+    humidityRef.setValue(humedad)
         .addOnSuccessListener {
             onResult(true, "Humedad guardada correctamente")
         }

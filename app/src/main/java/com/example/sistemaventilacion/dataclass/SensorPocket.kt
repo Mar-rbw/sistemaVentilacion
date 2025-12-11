@@ -1,9 +1,10 @@
 package com.example.sistemaventilacion.dataclass
 
-//data class SensorPocket(
-//    val tempC: Double = null, // Variables de temperatura en Celsius
-//    val hum: Double = null, // Variables de Humedad en %
-//    val counter: Int = null // Contador no se para que sirve?
-//)
+data class SensorPocket(
+    val temperatura: Float =0f,
+    val humedad:Float =0f,
+    val  timestamp: Long = 0L,
+    val counter: Int? = null
+)
 
 

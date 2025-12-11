@@ -2,15 +2,18 @@ package com.example.sistemaventilacion.ui.uielements.composables
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.DeviceThermostat
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Monitor
+import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.BottomAppBar
@@ -20,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -36,21 +40,21 @@ fun BottomAppBar(
 ) {
     val items = listOf(
         NavChip("Hub", "Hub", IconSource.Vector(Icons.Default.Home)),
-        NavChip("Monitor", "Monitor", IconSource.Vector(Icons.Default.Bolt)),
+        NavChip("Monitoreo", "Monitor", IconSource.Vector(Icons.Default.Monitor)),
         NavChip("Control", "Control", IconSource.Vector(Icons.Default.Bolt)),
         NavChip(
-            "Notificación Humedad",
             "NotificacionHumedad",
+            "Notificacion de Humedad",
             IconSource.Resource(R.drawable.outline_humidity_percentage_24)
         ),
         NavChip(
-            "Notificación Temp",
             "NotificacionTemperatura",
+            "Notificacion de Temperatura",
             IconSource.Vector(Icons.Default.DeviceThermostat)
         ),
-        NavChip("Activación", "ActivacionSistema", IconSource.Vector(Icons.Default.Bolt)),
-        NavChip("Agendar", "AgendarActivacion", IconSource.Vector(Icons.Default.CalendarMonth)),
-        NavChip("Historia", "Historia", IconSource.Vector(Icons.Default.Bolt))
+        NavChip("ActivacionSistema", "Activacion del Sistema", IconSource.Vector(Icons.Default.PowerSettingsNew)),
+        NavChip("AgendarActivacion", "Agendar Activacion", IconSource.Vector(Icons.Default.CalendarMonth)),
+        NavChip("Historial", "Historial", IconSource.Vector(Icons.Default.History))
     )
 
     @Composable
@@ -73,13 +77,14 @@ fun BottomAppBar(
     }
 
     BottomAppBar(
-        tonalElevation = 4.dp
+        tonalElevation = 4.dp,
+        containerColor = Color(0xFF1976D2),
+        contentPadding = PaddingValues(horizontal = 8.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .horizontalScroll(rememberScrollState())
-                .padding(horizontal = 8.dp),
+                .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -99,17 +104,17 @@ fun BottomAppBar(
                     colors = AssistChipDefaults.assistChipColors(
                         containerColor =
                             if (selected == item.route)
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                                Color(0xFFF76B1C)
                             else
                                 MaterialTheme.colorScheme.surface,
                         labelColor =
                             if (selected == item.route)
-                                MaterialTheme.colorScheme.primary
+                                Color(0xFFFAD961)
                             else
                                 MaterialTheme.colorScheme.onSurface,
                         leadingIconContentColor =
                             if (selected == item.route)
-                                MaterialTheme.colorScheme.primary
+                                Color(0xFFFAD961)
                             else
                                 MaterialTheme.colorScheme.onSurface
                     )

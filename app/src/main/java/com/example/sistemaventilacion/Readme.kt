@@ -26,3 +26,5 @@ package com.example.sistemaventilacion
 * 42E6D1
 * 116B85
 * */
+
+/*Estructura JSON*/

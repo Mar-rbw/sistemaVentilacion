@@ -4,17 +4,17 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.screens.ControlScreen
-import com.example.sistemaventilacion.ui.uielements.HistoryScreen
-//import com.example.sistemaventilacion.ui.uielements.MonitorScreen
 import com.example.sistemaventilacion.ui.uielements.activacionSistema.ActivacionSistemaScreen
 import com.example.sistemaventilacion.ui.uielements.agendarActivacion.AgendarActivacionScreen
 import com.example.sistemaventilacion.ui.uielements.auth.AuthLoginScreen
 import com.example.sistemaventilacion.ui.uielements.auth.AuthRegisterScreen
 import com.example.sistemaventilacion.ui.uielements.auth.AuthScreen
+import com.example.sistemaventilacion.ui.uielements.control.ControlScreen
+import com.example.sistemaventilacion.ui.uielements.history.HistoryScreen
 import com.example.sistemaventilacion.ui.uielements.hub.HubScreen
+import com.example.sistemaventilacion.ui.uielements.monitor.MonitorScreen
 import com.example.sistemaventilacion.ui.uielements.notificacionHumedad.NotificacionHumedadScreen
-import com.example.sistemaventilacion.ui.uielements.notificacionHumedad.NotificacionTemperaturaScreen
+import com.example.sistemaventilacion.ui.uielements.notificacionTemperatura.NotificacionTemperaturaScreen
 
 @Composable
 fun NavegacionApp() {
@@ -51,11 +51,11 @@ fun NavegacionApp() {
         composable("Control") {
             ControlScreen(navController)
         }
-        composable("Historia") {
+        composable("Historial") {
             HistoryScreen(navController)
         }
-//        composable("Monitoreo") {
-//            MonitorScreen(navController)
-//        }
+        composable("Monitoreo") {
+            MonitorScreen(navController)
+        }
     }
 }
