@@ -14,9 +14,9 @@ fun AgendarRepository(
 
     agendarRef.setValue(agendar)
         .addOnSuccessListener {
-            onResult(true, "Humedad guardada correctamente")
+            onResult(true, "Agendación guardada correctamente")
         }
         .addOnFailureListener { error ->
-            onResult(false, "Error al guardar la humedad: ${error.message}")
+            onResult(false, "Error al Agendar: ${error.message}")
         }
 }
