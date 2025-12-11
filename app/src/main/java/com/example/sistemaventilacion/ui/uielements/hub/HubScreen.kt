@@ -43,7 +43,6 @@ fun HubScreen(navController: NavHostController) {
 
 @Composable
 fun HubStructure(navController: NavHostController, modifier: Modifier) {
-    // La lógica de HubStructure se simplifica: ya no maneja el estado del diálogo modal.
 
     Column(
         modifier = modifier
@@ -60,11 +59,9 @@ fun HubStructure(navController: NavHostController, modifier: Modifier) {
             style = MaterialTheme.typography.bodySmall
         )
 
-        // Se llama a ColumnContent, la cual maneja la navegación directa.
         ColumnContent(
             navController = navController,
-            // Esta lambda ya no es funcionalmente relevante, ya que todas las opciones navegan.
-            onOptionClicked = { /* No hacer nada */ }
+            onOptionClicked = {}
         )
     }
 }

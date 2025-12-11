@@ -23,10 +23,8 @@ import com.example.sistemaventilacion.dataclass.OptionItem
 @Composable
 fun ColumnContent(
     navController: NavHostController,
-    // Eliminado el argumento 'context: Context' (es innecesario)
-    onOptionClicked: (OptionItem) -> Unit // Mantenido para la firma del ButtonExpansibleWithOptions
+    onOptionClicked: (OptionItem) -> Unit
 ) {
-    // 1. Opciones de Control de Ventilación (Todas navegan directamente)
     val ventilacionOptions = remember {
         listOf(
             OptionItem(
@@ -55,8 +53,6 @@ fun ColumnContent(
             )
         )
     }
-
-    // 2. Opciones de Notificaciones y Alarmas (Todas navegan directamente)
     val notificacionesOptions = remember {
         listOf(
             OptionItem(
@@ -80,14 +76,12 @@ fun ColumnContent(
         )
     }
 
-    // 3. Renderizado de los Botones Expansibles
+
     ButtonExpansibleWithOptions(
         title = "Control de Ventilación",
         subtitle = "Configurar modos y horarios de operación.",
         icon = R.drawable.logozeusair,
         options = ventilacionOptions,
-        // Se pasa la lambda, pero el ButtonExpansibleWithOptions corregido
-        // IGNORA esta lambda y ejecuta el onClick interno de la OptionItem.
         onOptionClicked = onOptionClicked
     )
 

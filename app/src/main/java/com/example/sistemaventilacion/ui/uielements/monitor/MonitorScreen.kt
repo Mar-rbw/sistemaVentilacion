@@ -29,12 +29,6 @@ fun MonitorScreen(navController: NavController, viewModel: MonitoryViewModel = v
     val context = LocalContext.current
     val data = viewModel.sensorData.collectAsState()
 
-    val TEMP_LIMITE = 23.5f
-    val HUM_LIMITE_INFERIOR = 40.0f
-    val HUM_LIMITE_SUPERIOR = 60.0f
-    val COLOR_ALERTA = Color(0xFFF44336)
-    val COLOR_CONFORT = Color(0xFF43A047)
-    val COLOR_PRIMARIO = Color(0xFF1976D2)
 
     Scaffold(
         topBar = {
@@ -66,7 +60,7 @@ fun MonitorScreen(navController: NavController, viewModel: MonitoryViewModel = v
             Icon(
                 imageVector = Icons.Default.Air,
                 contentDescription = "Ventilación",
-                tint = COLOR_PRIMARIO,
+                tint = Color(0xFF1976D2),
                 modifier = Modifier.size(100.dp)
             )
 
@@ -76,7 +70,7 @@ fun MonitorScreen(navController: NavController, viewModel: MonitoryViewModel = v
                 Icon(
                     imageVector = Icons.Default.Thermostat,
                     contentDescription = "Temperatura",
-                    tint = COLOR_PRIMARIO,
+                    tint = Color(0xFF1976D2),
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
@@ -88,8 +82,8 @@ fun MonitorScreen(navController: NavController, viewModel: MonitoryViewModel = v
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        if (data.value.temperatura < TEMP_LIMITE) "Temperatura baja" else "Temperatura confortable",
-                        color = if (data.value.temperatura < TEMP_LIMITE) COLOR_ALERTA else COLOR_CONFORT
+                        if (data.value.temperatura < 23.5f) "Temperatura baja" else "Temperatura confortable",
+                        color = if (data.value.temperatura < 23.5f) Color(0xFFF44336) else Color(0xFF43A047)
                     )
                 }
             }
@@ -101,7 +95,7 @@ fun MonitorScreen(navController: NavController, viewModel: MonitoryViewModel = v
                 Icon(
                     imageVector = Icons.Default.WaterDrop,
                     contentDescription = "Humedad",
-                    tint = COLOR_PRIMARIO,
+                    tint = Color(0xFF1976D2),
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
@@ -113,17 +107,17 @@ fun MonitorScreen(navController: NavController, viewModel: MonitoryViewModel = v
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        if (data.value.humedad < HUM_LIMITE_INFERIOR) {
+                        if (data.value.humedad < 40.0f) {
                             "Humedad baja"
-                        } else if (data.value.humedad > HUM_LIMITE_SUPERIOR) {
+                        } else if (data.value.humedad > 60.0f) {
                             "Humedad alta"
                         } else {
                             "Humedad óptima"
                         },
-                        color = if (data.value.humedad < HUM_LIMITE_INFERIOR || data.value.humedad > HUM_LIMITE_SUPERIOR) {
-                            COLOR_ALERTA
+                        color = if (data.value.humedad < 40.0f || data.value.humedad > 60.0f) {
+                            Color(0xFFF44336)
                         } else {
-                            COLOR_CONFORT
+                            Color(0xFF43A047)
                         }
                     )
                 }

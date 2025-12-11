@@ -39,7 +39,7 @@ fun ButtonExpansibleWithOptions(
     @DrawableRes icon: Int,
     options: List<OptionItem>,
     modifier: Modifier = Modifier,
-    onOptionClicked: (OptionItem) -> Unit // Se mantiene por compatibilidad de firma
+    onOptionClicked: (OptionItem) -> Unit
 ) {
     var expandir by rememberSaveable { mutableStateOf(false) }
 
@@ -87,13 +87,9 @@ fun ButtonExpansibleWithOptions(
                     OptionButton(
                         optionItem = option,
                         onClick = {
-                            // 🟢 Ejecuta la navegación/acción definida en la OptionItem
                             option.onClick()
 
-                            // Cierra el menú después de la acción
                             expandir = false
-
-                            // Ya no llamamos a onOptionClicked(option)
                         }
                     )
                     if (index < options.lastIndex) {
