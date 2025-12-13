@@ -9,6 +9,7 @@ import com.example.sistemaventilacion.ui.uielements.agendarActivacion.AgendarAct
 import com.example.sistemaventilacion.ui.uielements.auth.AuthLoginScreen
 import com.example.sistemaventilacion.ui.uielements.auth.AuthRegisterScreen
 import com.example.sistemaventilacion.ui.uielements.auth.AuthScreen
+import com.example.sistemaventilacion.ui.uielements.auth.PasswordResetScreen
 import com.example.sistemaventilacion.ui.uielements.control.ControlScreen
 import com.example.sistemaventilacion.ui.uielements.history.HistoryScreen
 import com.example.sistemaventilacion.ui.uielements.hub.HubScreen
@@ -57,5 +58,9 @@ fun NavegacionApp() {
         composable("Monitoreo") {
             MonitorScreen(navController)
         }
+        composable("PasswordReset") {
+            PasswordResetScreen(navController)
+        }
     }
 }
+

@@ -92,10 +92,8 @@ fun NotificacionHumedadStructure(
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = "Humedad de Activación(%)%")
-                Spacer(modifier = Modifier.height(8.dp))
                 RangeSliderWithTextFields(
-                    label = "Humedad de Activación(%)",
+                    label = "Humedad de Activación",
                     unit = "%",
                     minGlobal = 20f,
                     maxGlobal = 90f,

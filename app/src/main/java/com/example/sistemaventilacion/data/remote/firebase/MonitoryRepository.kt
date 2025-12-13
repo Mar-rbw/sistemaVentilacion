@@ -22,8 +22,8 @@ class MonitoryRepository {
 
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val temperatura = snapshot.child("tempC").getValue(Float::class.java) ?: 0.0f
-                val humedad = snapshot.child("hum").getValue(Float::class.java) ?: 0.0f
+                val temperatura = snapshot.child("temperatura").getValue(Float::class.java) ?: 0.0f
+                val humedad = snapshot.child("humedad").getValue(Float::class.java) ?: 0.0f
                 val timestamp = snapshot.child("timestamp").getValue(Long::class.java) ?: 0L
                 val counter = snapshot.child("counter").getValue(Int::class.java) ?: 0
 

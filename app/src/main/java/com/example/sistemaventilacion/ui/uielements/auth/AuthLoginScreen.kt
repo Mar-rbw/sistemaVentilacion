@@ -3,6 +3,7 @@ package com.example.sistemaventilacion.ui.uielements.auth
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -36,6 +38,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.sistemaventilacion.ui.uielements.composables.BottomAppBar
@@ -187,10 +190,14 @@ fun AuthLoginStructure(
             ),
             enabled = !loading
         ) {
-            Text(if (loading) "Ingresando..." else "Ingresar",
+            Text(
+                if (loading) "Ingresando..." else "Ingresar",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.W400,
-                textAlign = TextAlign.Center,)
+                textAlign = TextAlign.Center,
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
         }
     }
-}
+
