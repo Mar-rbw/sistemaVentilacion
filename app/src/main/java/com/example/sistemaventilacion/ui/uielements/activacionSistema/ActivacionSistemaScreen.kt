@@ -39,6 +39,9 @@ import com.example.sistemaventilacion.ui.uielements.composables.IconSource
 import com.example.sistemaventilacion.ui.uielements.composables.RangeSliderWithTextFields
 import com.example.sistemaventilacion.ui.uielements.composables.TextFieldNumberFormatter
 import com.example.sistemaventilacion.ui.uielements.composables.TopBar
+import com.example.sistemaventilacion.data.remote.firebase.HistoryRepository
+import com.example.sistemaventilacion.dataclass.ActionType
+import com.google.firebase.auth.FirebaseAuth
 
 val RangeTemperatureSaver = Saver<ClosedFloatingPointRange<Float>, List<Float>>(
     save = { listOf(it.start, it.endInclusive) },
@@ -171,12 +174,22 @@ fun ActivacionSistemaStructure(
                             DURACION = duracion,
                             ACTIVADO = activado
                         )
-                        val userId = "ID_DEL_USUARIO"
+                        val currentUser = FirebaseAuth.getInstance().currentUser
+                        val userId = currentUser?.uid ?: ""
 
                         ActivacionRepository(
                             userId = userId,
                             activacion = activation,
                             onResult = { success, message ->
+                                if (success) {
+                                    HistoryRepository().postAuditLog(
+                                        userId = userId,
+                                        userName = currentUser?.email ?: "Usuario",
+                                        action = "Configuración de activación actualizada",
+                                        actionType = ActionType.CONFIG_CHANGE,
+                                        newValue = "Temp: $minTem-$maxTem°C, Hum: $minHum-$maxHum%"
+                                    )
+                                }
                                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                             }
                         )

@@ -18,26 +18,30 @@ class HistoryRepository {
     private val historialRef = database.getReference("historial")
 
     fun logAction(history: History) {
-        historialRef.child("userId")
-            .push()
-            .setValue(history)
-            .addOnFailureListener { e ->
-                Log.e("HistoryRepository", "Error al registrar auditoría en Firebase", e)
-            }
+        if (history.userId.isNotEmpty()) {
+            historialRef.child(history.userId)
+                .push()
+                .setValue(history)
+                .addOnFailureListener { e ->
+                    Log.e("HistoryRepository", "Error al registrar auditoría en Firebase", e)
+                }
+        } else {
+             Log.e("HistoryRepository", "Error: userId vacío al intentar registrar auditoría")
+        }
     }
 
     fun getAuditLogs(userId: String, limitToLast: Int = 50): Flow<List<History>> = callbackFlow {
-        Log.d("HistoryRepository", "Iniciando getAuditLogs desde la ruta fija 'historial/userId'")
+        Log.d("HistoryRepository", "Iniciando getAuditLogs para usuario: $userId")
 
         val query = historialRef
-            .child("userId")
+            .child(userId)
             .orderByChild("timestamp")
             .limitToLast(limitToLast)
 
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (!snapshot.exists()) {
-                    Log.w("HistoryRepository", "No existen datos en la ruta 'historial/userId'")
+                    Log.w("HistoryRepository", "No existen datos para el usuario: $userId")
                     trySend(emptyList())
                     return
                 }
@@ -51,19 +55,19 @@ class HistoryRepository {
                     }
                 }.sortedByDescending { it.timestamp }
 
-                Log.d("HistoryRepository", "Se encontraron ${logs.size} logs en 'historial/userId'")
+                Log.d("HistoryRepository", "Se encontraron ${logs.size} logs para $userId")
                 trySend(logs)
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("HistoryRepository", "Lectura cancelada para 'historial/userId'", error.toException())
+                Log.e("HistoryRepository", "Lectura cancelada para $userId", error.toException())
                 close(error.toException())
             }
         }
         query.addValueEventListener(listener)
 
         awaitClose {
-            Log.d("HistoryRepository", "Cerrando listener para 'historial/userId'")
+            Log.d("HistoryRepository", "Cerrando listener para $userId")
             query.removeEventListener(listener)
         }
     }

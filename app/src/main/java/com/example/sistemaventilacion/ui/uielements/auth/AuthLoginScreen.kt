@@ -43,6 +43,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.sistemaventilacion.ui.uielements.composables.BottomAppBar
 import com.example.sistemaventilacion.ui.uielements.composables.TopBar
+import com.example.sistemaventilacion.data.remote.firebase.HistoryRepository
+import com.example.sistemaventilacion.dataclass.ActionType
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -170,9 +172,15 @@ fun AuthLoginStructure(
                                     "Login exitoso!",
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                navController.navigate("Hub") {
-                                    popUpTo("AuthLogin") { inclusive = true }
-                                }
+                                    HistoryRepository().postAuditLog(
+                                        userId = auth.currentUser?.uid ?: "",
+                                        userName = auth.currentUser?.email ?: "Usuario",
+                                        action = "Inicio de sesión exitoso",
+                                        actionType = ActionType.LOGIN
+                                    )
+                                    navController.navigate("Hub") {
+                                        popUpTo("AuthLogin") { inclusive = true }
+                                    }
                             } else {
                                 Toast.makeText(
                                     navController.context,
