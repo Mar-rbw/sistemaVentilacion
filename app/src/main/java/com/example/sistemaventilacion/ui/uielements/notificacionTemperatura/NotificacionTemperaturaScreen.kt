@@ -34,6 +34,7 @@ import com.example.sistemaventilacion.dataclass.NotificacionTemperatura
 import com.example.sistemaventilacion.ui.uielements.composables.BottomAppBar
 import com.example.sistemaventilacion.ui.uielements.composables.RangeSliderWithTextFields
 import com.example.sistemaventilacion.ui.uielements.composables.TopBar
+import com.google.firebase.auth.FirebaseAuth
 import kotlin.math.roundToInt
 
 val RangeSaver = Saver<ClosedFloatingPointRange<Float>, List<Float>>(
@@ -113,14 +114,23 @@ fun NotificacionTemperaturaStructure(
                         val minTem = temperaturaRange.start.roundToInt()
                         val maxTem = temperaturaRange.endInclusive.roundToInt()
 
+                        // Obtenemos el ID del usuario real desde Firebase Auth
+                        val auth = FirebaseAuth.getInstance()
+                        val userId = auth.currentUser?.uid
+
+                        // Verificamos si el usuario está logueado
+                        if (userId == null) {
+                            Toast.makeText(context, "Error: Usuario no autenticado. Inicie sesión de nuevo.", Toast.LENGTH_LONG).show()
+                            return@Button
+                        }
+
                         val temperature = NotificacionTemperatura(
                             MIN_TEM = minTem.toFloat(),
                             MAX_TEM = maxTem.toFloat()
                         )
-                        val userId = "ID_DEL_USUARIO"
 
                         NotificacionTemperaturaRepository(
-                            userId = userId,
+                            userId = userId, // Usamos el userId real
                             temperatura = temperature,
                             onResult = { success, message ->
                                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

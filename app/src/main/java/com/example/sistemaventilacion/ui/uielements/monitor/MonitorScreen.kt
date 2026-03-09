@@ -43,7 +43,7 @@ fun MonitorScreen(navController: NavController, viewModel: MonitoryViewModel = v
         bottomBar = {
             BottomAppBar(
                 navController = navController,
-                selected = "Monitor",
+                selected = "Monitoreo",
                 onSelected = { navController.navigate(it) })
         }
     ) { padding ->

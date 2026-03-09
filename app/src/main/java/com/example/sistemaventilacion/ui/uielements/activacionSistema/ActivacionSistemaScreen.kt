@@ -30,7 +30,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.sistemaventilacion.data.remote.firebase.ActivacionRepository
 import com.example.sistemaventilacion.dataclass.ActivacionSistema
@@ -107,9 +110,17 @@ fun ActivacionSistemaStructure(
     ) {
 
 
-        Text("Umbral de Activación")
+        Text("Umbral de Activación",
+            fontSize = 25.sp,
+            fontWeight = FontWeight.W500,
+            textAlign = TextAlign.Center,
+            color = Color.Black)
         Spacer(modifier = Modifier.height(12.dp))
-        Text("Configure los parámetros del sistema")
+        Text("Configure los parámetros del sistema",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.W500,
+            textAlign = TextAlign.Center,
+            color = Color.Black)
         Spacer(modifier = Modifier.height(24.dp))
 
         Card(
@@ -117,12 +128,20 @@ fun ActivacionSistemaStructure(
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text("Parámetros de Activación")
+                Text("Parámetros de Activación",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = Color.Black)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Defina los valores que activarán el sistema automáticamente")
+                Text("Defina los valores que activarán el sistema automáticamente",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center,
+                    color = Color.Black)
                 Spacer(modifier = Modifier.height(8.dp))
                 RangeSliderWithTextFields(
-                    label = "Humedad de activación(%)",
+                    label = "Humedad de activación",
                     unit = "%",
                     minGlobal = 20f,
                     maxGlobal = 90f,
@@ -162,7 +181,7 @@ fun ActivacionSistemaStructure(
                         val minHum = activacionHumedadRange.start
                         val maxHum = activacionHumedadRange.endInclusive
 
-                        val duracion = duracion.toInt()
+                        val duracionInt = duracion.toInt()
                         val activado = true
 
 
@@ -171,7 +190,7 @@ fun ActivacionSistemaStructure(
                             MAX_TEM = maxTem,
                             MIN_HUM = minHum,
                             MAX_HUM = maxHum,
-                            DURACION = duracion,
+                            DURACION = duracionInt,
                             ACTIVADO = activado
                         )
                         val currentUser = FirebaseAuth.getInstance().currentUser
@@ -181,6 +200,7 @@ fun ActivacionSistemaStructure(
                             userId = userId,
                             activacion = activation,
                             onResult = { success, message ->
+                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                 if (success) {
                                     HistoryRepository().postAuditLog(
                                         userId = userId,
@@ -189,8 +209,8 @@ fun ActivacionSistemaStructure(
                                         actionType = ActionType.CONFIG_CHANGE,
                                         newValue = "Temp: $minTem-$maxTem°C, Hum: $minHum-$maxHum%"
                                     )
+                                    navController.navigate("Hub")
                                 }
-                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                             }
                         )
                     },
@@ -198,7 +218,8 @@ fun ActivacionSistemaStructure(
                         containerColor = Color(0xFFF76B1C),
                         contentColor = Color.White,
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = duracion.toIntOrNull() != null && duracion.toInt() > 0
                 )
                 {
                     Icon(

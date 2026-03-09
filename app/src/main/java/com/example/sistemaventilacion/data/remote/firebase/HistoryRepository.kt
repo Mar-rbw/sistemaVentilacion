@@ -15,33 +15,33 @@ import kotlinx.coroutines.flow.callbackFlow
 class HistoryRepository {
 
     private val database = Firebase.database
+    // Apuntamos a la raíz del historial
     private val historialRef = database.getReference("historial")
 
     fun logAction(history: History) {
-        if (history.userId.isNotEmpty()) {
-            historialRef.child(history.userId)
-                .push()
-                .setValue(history)
-                .addOnFailureListener { e ->
-                    Log.e("HistoryRepository", "Error al registrar auditoría en Firebase", e)
-                }
-        } else {
-             Log.e("HistoryRepository", "Error: userId vacío al intentar registrar auditoría")
-        }
+        // Forzamos que todos los logs se guarden bajo la clave literal "userId"
+        historialRef.child("userId")
+            .push()
+            .setValue(history)
+            .addOnFailureListener { e ->
+                Log.e("HistoryRepository", "Error al registrar auditoría en Firebase", e)
+            }
     }
 
+    // La función ignora el userId dinámico y siempre consulta la ruta fija
     fun getAuditLogs(userId: String, limitToLast: Int = 50): Flow<List<History>> = callbackFlow {
-        Log.d("HistoryRepository", "Iniciando getAuditLogs para usuario: $userId")
+        Log.d("HistoryRepository", "Iniciando getAuditLogs desde la ruta fija 'historial/userId'")
 
+        // Forzamos la consulta a la clave literal "userId"
         val query = historialRef
-            .child(userId)
+            .child("userId")
             .orderByChild("timestamp")
             .limitToLast(limitToLast)
 
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (!snapshot.exists()) {
-                    Log.w("HistoryRepository", "No existen datos para el usuario: $userId")
+                    Log.w("HistoryRepository", "No existen datos en la ruta 'historial/userId'")
                     trySend(emptyList())
                     return
                 }
@@ -55,19 +55,19 @@ class HistoryRepository {
                     }
                 }.sortedByDescending { it.timestamp }
 
-                Log.d("HistoryRepository", "Se encontraron ${logs.size} logs para $userId")
+                Log.d("HistoryRepository", "Se encontraron ${logs.size} logs en 'historial/userId'")
                 trySend(logs)
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("HistoryRepository", "Lectura cancelada para $userId", error.toException())
+                Log.e("HistoryRepository", "Lectura cancelada para 'historial/userId'", error.toException())
                 close(error.toException())
             }
         }
         query.addValueEventListener(listener)
 
         awaitClose {
-            Log.d("HistoryRepository", "Cerrando listener para $userId")
+            Log.d("HistoryRepository", "Cerrando listener para 'historial/userId'")
             query.removeEventListener(listener)
         }
     }

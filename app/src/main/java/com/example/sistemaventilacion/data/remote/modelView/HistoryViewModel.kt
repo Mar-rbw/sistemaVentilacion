@@ -38,7 +38,6 @@ class HistoryViewModel(
 
     val auditLogs: StateFlow<List<History>> = userIdFlow.flatMapLatest { userId ->
         Log.d("HistoryViewModel", "UserID Flow emitió un nuevo valor: $userId")
-        // Solo intentamos cargar si el usuario está logueado, aunque el repo use una ruta fija
         if (userId != null) {
             historyRepository.getAuditLogs(userId = userId, limitToLast = logLimit)
         } else {

@@ -36,6 +36,7 @@ import com.example.sistemaventilacion.ui.uielements.composables.IconSource
 import com.example.sistemaventilacion.ui.uielements.composables.TextFieldNumberFormatter
 import com.example.sistemaventilacion.ui.uielements.composables.TimePicker
 import com.example.sistemaventilacion.ui.uielements.composables.TopBar
+import com.google.firebase.auth.FirebaseAuth
 import java.util.Locale
 
 
@@ -47,7 +48,7 @@ fun AgendarActivacionScreen(
         topBar = {
             TopBar(
                 navController = navController,
-                title = "ActSisScreen",
+                title = "AgendarScreen",
                 "Hub",
                 loginRoute = true,
                 canGoBack = true
@@ -56,7 +57,7 @@ fun AgendarActivacionScreen(
         bottomBar = {
             BottomAppBar(
                 navController = navController,
-                selected = "ActivacionSistema",
+                selected = "AgendarActivacion",
                 onSelected = { navController.navigate(it) }
             )
         }
@@ -158,7 +159,6 @@ fun AgendarActivacionStructure(
                     onClick = {
                         val duracionMin = duracionState.toIntOrNull()
 
-
                         if (dateState.isEmpty() || timeState.isEmpty()) {
                             Toast.makeText(context, "Por favor, seleccione fecha y hora.", Toast.LENGTH_SHORT).show()
                             return@Button
@@ -173,6 +173,16 @@ fun AgendarActivacionStructure(
                             return@Button
                         }
 
+                        // Obtenemos el ID de usuario real de Firebase Auth
+                        val auth = FirebaseAuth.getInstance()
+                        val userId = auth.currentUser?.uid
+
+                        // Verificamos si el usuario está logueado
+                        if (userId == null) {
+                            Toast.makeText(context, "Error: No se pudo encontrar el usuario. Inicie sesión de nuevo.", Toast.LENGTH_LONG).show()
+                            return@Button
+                        }
+
                         val message = String.format(
                             Locale.getDefault(),
                             "Tarea agendada: %s a las %s por %d min. Enviando a Firebase...",
@@ -182,25 +192,18 @@ fun AgendarActivacionStructure(
                         )
                         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
 
-                        val activado = true
-                        val date: String = dateState
-                        val time: String = timeState
-                        val duracion: Int = duracionMin
-
                         val agendar = AgendarActivacion(
-                            ACTIVADO = activado,
-                            FECHA = date,
-                            HORA = time,
-                            DURACION = duracion
+                            ACTIVADO = true,
+                            FECHA = dateState,
+                            HORA = timeState,
+                            DURACION = duracionMin
                         )
-                        val userId = "ID_DEL_USUARIO"
-
 
                         AgendarRepository(
                             agendar = agendar,
-                            userId = userId,
-                            onResult = { success, message ->
-                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                            userId = userId, // Usamos el userId real
+                            onResult = { success, resultMessage ->
+                                Toast.makeText(context, resultMessage, Toast.LENGTH_SHORT).show()
                             }
                         )
                     },

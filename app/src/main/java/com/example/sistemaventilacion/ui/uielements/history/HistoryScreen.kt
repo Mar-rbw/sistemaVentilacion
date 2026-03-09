@@ -59,7 +59,7 @@ fun HistoryScreen(navController: NavHostController) {
         bottomBar = {
             BottomAppBar(
                 navController = navController,
-                selected = "History",
+                selected = "Historial",
                 onSelected = { navController.navigate(it) }
             )
         }

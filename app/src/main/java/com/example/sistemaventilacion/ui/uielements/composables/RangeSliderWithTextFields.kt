@@ -17,8 +17,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
 
 
@@ -55,7 +58,10 @@ fun RangeSliderWithTextFields(
     ) {
         Text(
             text = "$label ($unit)",
-            fontWeight = FontWeight.SemiBold
+            fontSize = 15.sp,
+            fontWeight = FontWeight.W500,
+            textAlign = TextAlign.Center,
+            color = Color.Black
         )
         Spacer(modifier = Modifier.padding(8.dp))
         Row(

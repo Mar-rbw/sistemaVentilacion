@@ -34,6 +34,7 @@ import com.example.sistemaventilacion.dataclass.NotificacionHumedad
 import com.example.sistemaventilacion.ui.uielements.composables.BottomAppBar
 import com.example.sistemaventilacion.ui.uielements.composables.RangeSliderWithTextFields
 import com.example.sistemaventilacion.ui.uielements.composables.TopBar
+import com.google.firebase.auth.FirebaseAuth
 import kotlin.math.roundToInt
 
 val RangeSaver = Saver<ClosedFloatingPointRange<Float>, List<Float>>(
@@ -108,19 +109,29 @@ fun NotificacionHumedadStructure(
                         val minHum = humidityRange.start.roundToInt()
                         val maxHum = humidityRange.endInclusive.roundToInt()
 
-                        val humidity = NotificacionHumedad(minHum.toFloat(), maxHum.toFloat())
-                        val userId = "ID_DEL_USUARIO"
+                        val auth = FirebaseAuth.getInstance()
+                        val userId = auth.currentUser?.uid
+
+                        if (userId == null) {
+                            Toast.makeText(context, "Error: Usuario no autenticado. Inicie sesión de nuevo.", Toast.LENGTH_LONG).show()
+                            return@Button
+                        }
+
+                        val humidity = NotificacionHumedad(
+                            MIN_HUM = minHum.toFloat(),
+                            MAX_HUM = maxHum.toFloat()
+                        )
 
                         notificacionHumedadRepository(
                             userId = userId,
                             humedad = humidity,
                             onResult = { success, message ->
                                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                if (success) {
+                                    navController.navigate("Hub")
+                                }
                             }
                         )
-
-                        /*TODO hacer un repositor por guardar el rango de para realizar una notificación al celular.
-                            Generar un toast para notificar guardado humedad entre el rango y validar que no se nulo y no crashear el programa*/
                     }
 
                 ) {
